@@ -1,5 +1,5 @@
 
-#Reading the data set
+#Reading the dataset
 import pandas as pd
 train=pd.read_csv('In-Class-Project-Dataset/Tweets-train.csv')
 
@@ -24,7 +24,7 @@ for each in train[train['airline_sentiment']=="negative"].sample(10,random_state
 for each in train[train['airline_sentiment']=="neutral"].sample(10,random_state=10)['text']:
     print (each) 
 
-# ## Observations are as follows?
+# ## Observations are as follows-
 # 
 
 # #### 1.  Data contains words starting with '@'
@@ -52,7 +52,6 @@ print (re.sub("[^a-zA-Z0-9]", " ",train.text[22]))
 print (train.text[5977])
 print (re.sub("[^a-zA-Z0-9]", " ",train.text[5977]))
 
-
 #We can prepare a function to clean all the above observed tokens from the tweet text.
 #Save changes in a new column 
 from nltk.tokenize import WordPunctTokenizer
@@ -65,7 +64,6 @@ def tweet_cleaner(text):
     words = tokenizer.tokenize(lower_case)
     return (" ".join(words)).strip()
 train['Cleaned-Text']=pd.Series(list(map(lambda x:tweet_cleaner(x),train['text'])))
-
 
 #See some words in All sentiments
 from collections import Counter
@@ -80,7 +78,6 @@ for group_name,subset in train.groupby('airline_sentiment'):
         
     print (group_name)
     print (Counter(words).most_common(5))
-
 
 #We observe that most of the frequencies are of stopwords , so let's remove them 
 from PreProcess import RemoveStopWords 
@@ -107,7 +104,6 @@ def RemoveExplicitlyMentionedWords(string,listofWordsToRemove):
 list_of_words_to_remove=['americanair','united','delta','southwestair','jetblue','virginamerica','usairways','flight','plane']
 train['Final-Wrangled-Text']=pd.Series(list(map(lambda x:RemoveExplicitlyMentionedWords(x,list_of_words_to_remove),train['Clean-Text-StopWords-Removed'])))
 
-
 #Count Again words in All sentiments
 from collections import Counter
 for group_name,subset in train.groupby('airline_sentiment'):
@@ -133,20 +129,16 @@ train.head(4)
 #Vectorize the Text Column (You can choose any vectorizer of your choice)
 from sklearn.feature_extraction.text import CountVectorizer
 vectorizer = CountVectorizer()
-
 x_train=vectorizer.fit_transform(train['Final-Wrangled-Text'])
 
 #Prepare a multiclass Classification model using any classification algorithm and create a model 
 y_train=train['SentimentLabel']
-
 
 # Preparing Model Using Naive Bayes classifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn import metrics
 nb = MultinomialNB()
 nb.fit(x_train,y_train)
-
-
 
 #Read the test data and carry our data cleaning, encoding and vectorising operations on the test data
 test=pd.read_csv('In-Class-Project-Dataset/Tweets-test.csv')
@@ -155,7 +147,6 @@ test['Cleaned-Text']=pd.Series(map(lambda x:tweet_cleaner(x),test['text']))
 test['Clean-Text-StopWords-Removed']=pd.Series(map(lambda x:RemoveStopWords(x),test['Cleaned-Text']))
 test['Final-Wrangled-Text']=pd.Series(map(lambda x:RemoveExplicitlyMentionedWords(x,list_of_words_to_remove),test['Clean-Text-StopWords-Removed']))
 x_test=vectorizer.transform(test['Final-Wrangled-Text'])
-
 
 #Encoding label for test data as well
 test['SentimentLabel']=l.transform(test['airline_sentiment'])
@@ -174,11 +165,7 @@ def GetOrignalSentiment(val):
     
 Result=test[['text','airline_sentiment']]
 Result['Predicted_sentiment']=pd.Series(map(lambda x:GetOrignalSentiment(x),y_pred))
-
-
 Result.head(3)
-
-
 
 #Print and explain the Confusion Matrix 
 print ("Confusion Matrix:\n\n",metrics.confusion_matrix(Result['airline_sentiment'],Result['Predicted_sentiment'],labels=['negative','neutral','positive']))
