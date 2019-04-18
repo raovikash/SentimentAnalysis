@@ -1,4 +1,4 @@
-# SentimentAnalysis
+# Sentiment Analysis
 
 The dataset has been taken from Kaggle. (https://www.kaggle.com/crowdflower/twitter-airline-sentiment/home)
 Dataset is having tweets of about 6 US Airlines along with their sentiments: positive, negative and neutral.
